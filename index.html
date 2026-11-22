@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Suyash Jain</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Suyash Jain, AWS Cloud and Serverless Engineer in Indore. Lambda, API Gateway, DynamoDB, AWS CDK, IAM and OAuth 2.0 for BFSI workloads.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single readable column framed like an infrastructure runbook — hero thesis, then a live-looking architecture diagram, then evidence (metrics, case studies, timeline). */
+:root{
+  --bg:#f3f6f7;
+  --surface:#ffffff;
+  --fg:#0d1b22;
+  --muted:#506169;
+  --line:#d6dee2;
+  --accent:#0a6b78;
+  --accent-soft:#dcefF1;
+  --signal:#b86e0c;
+  --f-display:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
+  --f-body:"Inter","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b1418;--surface:#111e24;--fg:#e4ecef;--muted:#93a6ae;--line:#243740;
+  --accent:#4fc3cf;--accent-soft:#12343a;--signal:#e9a23b;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1418;--surface:#111e24;--fg:#e4ecef;--muted:#93a6ae;--line:#243740;
+  --accent:#4fc3cf;--accent-soft:#12343a;--signal:#e9a23b;color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:960px;margin:0 auto;padding-block:40px 64px;display:flex;flex-direction:column;gap:72px}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+h2{font-size:1.6rem;font-weight:700}
+h3{font-size:1.1rem;font-weight:700}
+p{margin:0}
+.label{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+
+/* nav */
+nav{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+nav .id{font-family:var(--f-mono);font-size:.85rem;color:var(--muted)}
+nav .id b{color:var(--fg);font-weight:500}
+nav ul{display:flex;gap:20px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+nav a{color:var(--fg);text-decoration:none;font-size:.9rem}
+nav a:hover{color:var(--accent)}
+
+/* hero */
+.hero{display:flex;flex-direction:column;gap:20px}
+.hero h1{font-size:clamp(2.4rem,7vw,4.4rem);font-weight:800;letter-spacing:-.02em}
+.hero .role{font-family:var(--f-mono);color:var(--accent);font-size:.95rem}
+.hero .thesis{font-size:1.2rem;max-width:62ch;color:var(--fg)}
+.hero .thesis em{font-style:normal;color:var(--accent);font-weight:600}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:6px;font-weight:600;font-size:.95rem;text-decoration:none;border:1px solid var(--accent);cursor:pointer;font-family:var(--f-body)}
+.btn.primary{background:var(--accent);color:var(--bg)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.status{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.status i{width:8px;height:8px;border-radius:50%;background:#2e9d5b;box-shadow:0 0 0 3px color-mix(in srgb,#2e9d5b 25%,transparent)}
+
+/* diagram */
+.diagram{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.diagram .scroll{overflow-x:auto}
+.diagram svg{display:block;width:100%;min-width:600px;height:auto}
+.diagram figcaption{font-size:.9rem;color:var(--muted);max-width:70ch}
+svg .box{fill:var(--bg);stroke:var(--line);stroke-width:1.5}
+svg .legacy{fill:var(--bg);stroke:var(--muted);stroke-dasharray:4 4;stroke-width:1.5}
+svg .router{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5}
+svg .cell{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.2}
+svg .wire{stroke:var(--accent);stroke-width:1.4;fill:none}
+svg .wire.old{stroke:var(--muted);stroke-dasharray:4 4}
+svg text{fill:var(--fg);font-family:var(--f-body);font-size:13px}
+svg .t-mono{font-family:var(--f-mono);font-size:10.5px;fill:var(--muted)}
+svg .t-cell{font-family:var(--f-mono);font-size:10.5px;fill:var(--accent)}
+svg .t-head{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;fill:var(--muted)}
+svg .arrowhead{fill:var(--accent)}
+@media (prefers-reduced-motion:no-preference){
+  svg .pulse{stroke-dasharray:6 10;animation:flow 1.6s linear infinite}
+  @keyframes flow{to{stroke-dashoffset:-32}}
+}
+
+/* metrics */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
+.metric{padding:18px 20px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+.metric:last-child{border-right:0}
+.metric b{font-family:var(--f-display);font-size:1.9rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.metric span{font-size:.85rem;color:var(--muted)}
+@media (max-width:640px){.metric{border-right:0;border-bottom:1px solid var(--line)}.metric:last-child{border-bottom:0}}
+
+section{display:flex;flex-direction:column;gap:24px}
+.sec-head{display:flex;flex-direction:column;gap:6px}
+
+/* about */
+.about{display:grid;grid-template-columns:1.4fr 1fr;gap:32px}
+.about > *{min-width:0}
+.about p{max-width:65ch;color:var(--fg)}
+.about .facts{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;align-content:start;font-size:.95rem}
+.about .facts dt{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);padding-top:2px}
+.about .facts dd{margin:0}
+@media (max-width:720px){.about{grid-template-columns:1fr}}
+
+/* case studies */
+.cases{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.case{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.case .kv{display:grid;grid-template-columns:72px 1fr;gap:6px 12px;font-size:.92rem}
+.case .kv dt{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.case .kv dd{margin:0}
+.case .result{color:var(--signal);font-weight:600}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:4px}
+.tag{font-family:var(--f-mono);font-size:.72rem;padding:3px 8px;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+
+/* timeline */
+.timeline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.role-item{display:grid;grid-template-columns:170px 1fr;gap:24px;padding:24px 0;border-top:1px solid var(--line)}
+.role-item:last-child{border-bottom:1px solid var(--line)}
+.role-item > *{min-width:0}
+.role-item .when{font-family:var(--f-mono);font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.role-item .org{color:var(--muted);font-size:.92rem;margin-top:2px}
+.role-item ul{margin:12px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.role-item li::marker{color:var(--accent)}
+@media (max-width:640px){.role-item{grid-template-columns:1fr;gap:8px}}
+
+/* skills */
+.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0;border-top:1px solid var(--line)}
+.skill{padding:16px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:130px 1fr;gap:12px;padding-right:16px}
+.skill > *{min-width:0}
+.skill dt{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.skill dd{margin:0;font-size:.95rem}
+
+/* certs */
+.certs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.cert{border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:6px;background:var(--surface)}
+.cert .issuer{font-family:var(--f-mono);font-size:.75rem;color:var(--muted)}
+.cert.aws{border-color:var(--accent)}
+
+/* contact */
+.contact{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:32px;display:flex;flex-direction:column;gap:20px}
+.contact h2{font-size:clamp(1.6rem,4vw,2.2rem)}
+.contact .rows{display:flex;flex-direction:column;gap:10px}
+.contact .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.contact .row .label{width:84px}
+.contact .row .val{font-family:var(--f-mono);font-size:.95rem;user-select:all;word-break:break-all}
+.copy{font-family:var(--f-mono);font-size:.75rem;padding:4px 10px;border-radius:4px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
+.copy:hover{border-color:var(--accent);color:var(--accent)}
+footer{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav aria-label="Primary">
+    <div class="id"><b>suyash-jain</b> / cloud-serverless</div>
+    <ul>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero">
+    <span class="status"><i></i>Open to Cloud / Serverless roles · Indore or remote</span>
+    <h1>Suyash Jain</h1>
+    <div class="role">AWS Cloud &amp; Serverless Engineer · 6 years · BFSI</div>
+    <p class="thesis">I build serverless APIs on AWS that banks can trust. At TCS I helped move <em>500+ APIs</em> from a two-account setup to a <em>13-cell multi-account architecture</em>, replaced API keys with OAuth 2.0, and kept latency under 200 ms.</p>
+    <div class="cta">
+      <a class="btn primary" href="#contact">Get in touch</a>
+      <a class="btn ghost" href="https://www.linkedin.com/in/suy-ash-jain/" target="_blank" rel="noopener">LinkedIn ↗</a>
+    </div>
+  </header>
+
+  <figure class="diagram" style="margin:0">
+    <div class="label">Featured · Legacy → cell-based multi-account migration</div>
+    <div class="scroll">
+      <svg viewBox="0 0 720 240" role="img" aria-labelledby="dg-title">
+        <title id="dg-title">Two legacy AWS accounts migrated behind a cell router into thirteen isolated cell accounts</title>
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker></defs>
+        <text x="20" y="28" class="t-head">BEFORE · 2 ACCOUNTS</text>
+        <rect x="20" y="44" width="180" height="70" rx="6" class="legacy"/>
+        <text x="36" y="74">Account A</text><text x="36" y="94" class="t-mono">shared traffic · API keys</text>
+        <rect x="20" y="130" width="180" height="70" rx="6" class="legacy"/>
+        <text x="36" y="160">Account B</text><text x="36" y="180" class="t-mono">shared traffic · API keys</text>
+        <path d="M205 122 L268 122" class="wire pulse" marker-end="url(#ah)"/>
+        <text x="214" y="112" class="t-mono">500+ APIs</text>
+        <rect x="274" y="88" width="126" height="70" rx="6" class="router"/>
+        <text x="290" y="118">Cell router</text><text x="290" y="138" class="t-mono">OAuth 2.0 · JWT</text>
+        <text x="446" y="28" class="t-head">AFTER · 13 CELL ACCOUNTS</text>
+        <path d="M400 112 C420 112,420 66,442 66" class="wire"/>
+        <path d="M400 122 L442 122" class="wire"/>
+        <path d="M400 132 C420 132,420 178,442 178" class="wire"/>
+        <g id="cells"></g>
+        <text x="20" y="228" class="t-mono">CDK-defined · least-privilege IAM per cell · KMS keys automated · CloudWatch alarms per cell</text>
+      </svg>
+    </div>
+    <figcaption>Each cell is its own AWS account, so a traffic spike or fault in one cell stays there. I worked on the migration, the cell-based deployment pipeline and the OAuth 2.0 layer in front of it.</figcaption>
+  </figure>
+
+  <div class="metrics" aria-label="Key results">
+    <div class="metric"><b>500+</b><span>APIs migrated</span></div>
+    <div class="metric"><b>13</b><span>cell accounts</span></div>
+    <div class="metric"><b>&lt;200<small style="font-size:1rem"> ms</small></b><span>API latency</span></div>
+    <div class="metric"><b>99.9%</b><span>availability (BCP/DR)</span></div>
+    <div class="metric"><b>−40%</b><span>recovery time</span></div>
+  </div>
+
+  <section id="about" class="about">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="sec-head"><span class="label">About</span><h2>Serverless, secure by default</h2></div>
+      <p>I have spent six years at Tata Consultancy Services working on cloud for banking and financial services clients. I started in infrastructure and identity security, moved into AWS migration and disaster recovery, and now design and build serverless APIs with Node.js, Lambda, API Gateway and DynamoDB.</p>
+      <p>I care about the parts that are easy to skip: least-privilege IAM, encryption keys managed in code, alarms that fire before customers notice, and cold starts that stay small.</p>
+    </div>
+    <dl class="facts">
+      <dt>BASED IN</dt><dd>Indore, India</dd>
+      <dt>CURRENT</dt><dd>Cloud Software Application Developer, TCS</dd>
+      <dt>DOMAIN</dt><dd>BFSI (banking, financial services, insurance)</dd>
+      <dt>CERTIFIED</dt><dd>AWS Solutions Architect – Associate<br>AWS Developer – Associate</dd>
+      <dt>STACK</dt><dd>Node.js · TypeScript · AWS CDK</dd>
+    </dl>
+  </section>
+
+  <section id="work">
+    <div class="sec-head"><span class="label">Selected work</span><h2>Case studies</h2></div>
+    <div class="cases">
+      <article class="case">
+        <h3>Cell-based multi-account migration</h3>
+        <dl class="kv">
+          <dt>Problem</dt><dd>500+ APIs shared two AWS accounts, so load and failures in one area affected everyone.</dd>
+          <dt>Work</dt><dd>Migrated APIs into 13 isolated cell accounts and built the cell-based deployment architecture.</dd>
+          <dt>Result</dt><dd class="result">Better scalability, performance and fault isolation.</dd>
+        </dl>
+        <div class="tags"><span class="tag">Lambda</span><span class="tag">API Gateway</span><span class="tag">AWS CDK</span><span class="tag">Organizations</span></div>
+      </article>
+      <article class="case">
+        <h3>OAuth 2.0 replaces API keys</h3>
+        <dl class="kv">
+          <dt>Problem</dt><dd>Clients authenticated with static API keys, which are hard to rotate and easy to leak.</dd>
+          <dt>Work</dt><dd>Led the rollout of OAuth 2.0 with Amazon Cognito and API Gateway JWT authorizers.</dd>
+          <dt>Result</dt><dd class="result">Token-based, scoped access across the API estate.</dd>
+        </dl>
+        <div class="tags"><span class="tag">Cognito</span><span class="tag">JWT</span><span class="tag">OAuth 2.0</span><span class="tag">IAM</span></div>
+      </article>
+      <article class="case">
+        <h3>Leaner Lambdas, keys as code</h3>
+        <dl class="kv">
+          <dt>Problem</dt><dd>AWS SDK v2 bloated Lambda bundles, and KMS keys were set up by hand.</dd>
+          <dt>Work</dt><dd>Upgraded to modular SDK v3 and automated KMS keys, encryption policies and controls in CDK.</dd>
+          <dt>Result</dt><dd class="result">Smaller packages, faster cold starts, repeatable security.</dd>
+        </dl>
+        <div class="tags"><span class="tag">AWS SDK v3</span><span class="tag">KMS</span><span class="tag">CDK</span><span class="tag">CloudWatch</span></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="sec-head"><span class="label">Experience · Tata Consultancy Services</span><h2>Six years, three roles</h2></div>
+    <ol class="timeline">
+      <li class="role-item">
+        <div class="when">Nov 2022 – Present</div>
+        <div>
+          <h3>Cloud Software Application Developer</h3>
+          <div class="org">TCS · BFSI client</div>
+          <ul>
+            <li>Design and build serverless APIs with Lambda, API Gateway, DynamoDB and RDS, handling thousands of daily transactions at under 200 ms.</li>
+            <li>Migrated 500+ APIs to a 13-cell multi-account architecture and implemented cell-based deployments.</li>
+            <li>Led OAuth 2.0 with Cognito and JWT authorizers, replacing API-key access.</li>
+            <li>Upgraded AWS SDK v2 to v3; automated KMS keys and encryption policies with CDK.</li>
+            <li>Designed least-privilege IAM roles; set up CloudWatch metrics and alarms.</li>
+          </ul>
+        </div>
+      </li>
+      <li class="role-item">
+        <div class="when">Nov 2021 – Oct 2022</div>
+        <div>
+          <h3>Systems Engineer</h3>
+          <div class="org">TCS · BFSI cloud migration</div>
+          <ul>
+            <li>Supported AWS migration of BFSI workloads.</li>
+            <li>Designed BCP and DR-ready architecture for 99.9% availability.</li>
+            <li>Automated monitoring and failover, cutting recovery time by 40%.</li>
+            <li>Tightened IAM governance and cloud access control.</li>
+          </ul>
+        </div>
+      </li>
+      <li class="role-item">
+        <div class="when">Nov 2020 – Oct 2021</div>
+        <div>
+          <h3>Associate Systems Engineer</h3>
+          <div class="org">TCS · Infrastructure &amp; security</div>
+          <ul>
+            <li>Migrated 500+ users to Azure AD with MFA enforcement.</li>
+            <li>Managed VPN, firewall configuration and endpoint security policies.</li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section id="skills">
+    <div class="sec-head"><span class="label">Toolbox</span><h2>Skills</h2></div>
+    <dl class="skills">
+      <div class="skill"><dt>Serverless</dt><dd>Lambda, API Gateway, Step Functions, EventBridge, SQS</dd></div>
+      <div class="skill"><dt>Compute &amp; net</dt><dd>EC2, S3, VPC, CloudWatch</dd></div>
+      <div class="skill"><dt>IaC</dt><dd>AWS CDK, CloudFormation, Terraform (basic)</dd></div>
+      <div class="skill"><dt>Backend</dt><dd>Node.js, TypeScript, JavaScript, REST, microservices</dd></div>
+      <div class="skill"><dt>Security</dt><dd>IAM policy design, KMS, OAuth 2.0, JWT, MFA, Secrets Manager</dd></div>
+      <div class="skill"><dt>Data</dt><dd>DynamoDB, Amazon RDS, SQL</dd></div>
+      <div class="skill"><dt>Delivery</dt><dd>CI/CD, Git, GitHub, Jira, Agile / Scrum</dd></div>
+    </dl>
+  </section>
+
+  <section id="certs">
+    <div class="sec-head"><span class="label">Credentials</span><h2>Certifications &amp; education</h2></div>
+    <div class="certs">
+      <div class="cert aws"><span class="issuer">AMAZON WEB SERVICES</span><h3>Solutions Architect – Associate</h3></div>
+      <div class="cert aws"><span class="issuer">AMAZON WEB SERVICES</span><h3>Developer – Associate</h3></div>
+      <div class="cert"><span class="issuer">NPTEL</span><h3>Core Java</h3></div>
+      <div class="cert"><span class="issuer">SHRI VAISHNAV VIDYAPEETH VISHWAVIDYALAYA</span><h3>B.Tech, Information Technology</h3><span class="mono" style="font-size:.8rem;color:var(--muted)">CGPA 7.5</span></div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <span class="label">Contact</span>
+    <h2>Hiring for AWS serverless work? Let's talk.</h2>
+    <div class="rows">
+      <div class="row"><span class="label">Email</span><span class="val" id="email">suyashjain154@gmail.com</span><button class="copy" id="copy-email" data-target="email" type="button">Copy</button></div>
+      <div class="row"><span class="label">LinkedIn</span><a class="val" href="https://www.linkedin.com/in/suy-ash-jain/" target="_blank" rel="noopener">linkedin.com/in/suy-ash-jain</a></div>
+      <div class="row"><span class="label">Location</span><span class="val">Indore, India · open to remote</span></div>
+    </div>
+  </section>
+
+  <footer><span>© 2026 Suyash Jain</span><span>Built serverless-style: one static file.</span></footer>
+</div>
+
+<script>
+(function(){
+  var g=document.getElementById('cells'),ns='http://www.w3.org/2000/svg',n=0;
+  var rows=[5,5,3];
+  rows.forEach(function(count,r){
+    for(var c=0;c<count;c++){
+      n++;var x=446+c*54,y=46+r*56;
+      var rect=document.createElementNS(ns,'rect');
+      rect.setAttribute('x',x);rect.setAttribute('y',y);rect.setAttribute('width',46);rect.setAttribute('height',40);rect.setAttribute('rx',5);rect.setAttribute('class','cell');
+      var t=document.createElementNS(ns,'text');
+      t.setAttribute('x',x+23);t.setAttribute('y',y+24);t.setAttribute('text-anchor','middle');t.setAttribute('class','t-cell');
+      t.textContent='c'+(n<10?'0':'')+n;
+      g.appendChild(rect);g.appendChild(t);
+    }
+  });
+  document.querySelectorAll('.copy').forEach(function(b){
+    b.addEventListener('click',function(){
+      var el=document.getElementById(b.dataset.target),txt=el.textContent;
+      function sel(){var r=document.createRange();r.selectNodeContents(el);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Selected';}
+      try{navigator.clipboard.writeText(txt).then(function(){b.textContent='Copied';},sel);}catch(e){sel();}
+      setTimeout(function(){b.textContent='Copy';},1800);
+    });
+  });
+})();
+</script>
+</body>
+</html>
